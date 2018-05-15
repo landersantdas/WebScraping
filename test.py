@@ -7,24 +7,24 @@ page = req.urlopen(site)
 soup = BeautifulSoup(page, 'html.parser') # from url
 
 
-final = []
+final = {}
 answers = []
-info = {}
+question = {}
 
 #get all text inside post-text div
-answersTxt = soup.findAll('div',attrs={"class":"post-text"})
-
-for ans in answersTxt:
+info = soup.findAll('div',attrs={"class":"post-text"})
+for ans in info:
     answers.append(ans.text)
 
+#question
+question['title'] = soup.title.text
+question['body'] = answers[0]
 
-info['question'] = soup.title.text + answers[0] 
+final['question'] = question 
 
-#delete the question
+#delete the question and add answers to final
 del answers[0]
-info['answers'] = answers
-
-final.append(info)
+final['answers'] = answers
 
 
 print(final)
