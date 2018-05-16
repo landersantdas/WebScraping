@@ -66,8 +66,6 @@ for ans3 in info3:
 	ctr = ctr + 1
 	#print(ctr)
 
-editName[0] = "none"
-editDate[0] = "none"
 
 #print(str(editName) + "\n" +str(editDate))
 
@@ -82,6 +80,9 @@ for ans4 in info4:
 
 askedEditObj['name'] = editName[0]
 askedEditObj['date'] = editDate[0]
+
+editName[0] = "none"
+editDate[0] = "none"
 
 
 #question
