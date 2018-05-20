@@ -11,8 +11,11 @@ def parse(soup):
 	answers = []
 	voteCounts = []
 	userDetails = [] 
-	userDates = [] 
+	userDates = []
 
+	comments = []
+
+	#data gathering
 	#get all answers inside post-text div
 	infoAns = soup.findAll('div',attrs={"class":"post-text"})
 	for ans in infoAns:
@@ -36,6 +39,19 @@ def parse(soup):
 	for date in infoDate:
 	    userDates.append(date.text.strip())
 
+	#get comments
+	infoCommentsList = soup.findAll('ul', attrs={"class": "comments-list js-comments-list"})
+	for commentsList in infoCommentsList:
+		infoComments = commentsList.findAll('div', attrs= {"class": "comment-body"})
+		commentsEach = []
+		for comment in infoComments:
+			commentsObj = {}
+			commentsObj = {"comment": comment.span.text.strip() , "commented-by": comment.select('.comment-user')[0].string , "date" : comment.select('.comment-date')[0].string}
+			commentsEach.append(commentsObj)
+			#print(comment.select('.comment-user')[0].string)
+		comments.append(commentsEach)
+
+
 	#question
 	finalQuestion['title'] = soup.title.text
 	finalQuestion['body'] = answers[0]
@@ -48,6 +64,7 @@ def parse(soup):
 
 	count = 0
 	countAns = 0
+
 
 	while (count < len(userDetails)):
 		if ("asked" in userDates[count]):
@@ -64,7 +81,6 @@ def parse(soup):
 			semiFinalAnswer['answer'] = answers[countAns]
 			semiFinalAnswer['vote-count'] = voteCounts[countAns]
 			semiFinalAnswer['answered-by'] = {'name' : userDetails[count] , 'date' : userDates[count]}
-
 			if ("edited" in userDates[count-1]):
 				if (userDetails[count-1] != ""):
 					semiFinalAnswer['edited-by'] = {'name' : userDetails[count-1] , 'date' : userDates[count-1]}
@@ -73,11 +89,14 @@ def parse(soup):
 			else:
 				semiFinalAnswer['edited-by'] = {'name' : "none" , 'date' : "none"}
 			
+			semiFinalAnswer['comments'] = comments[countAns+1]
+
 			countAns = countAns + 1
 			finalAnswer.append(semiFinalAnswer)
 		count = count + 1
 
 
+	finalQuestion['comments'] = comments[0]
 	final['question'] = finalQuestion
 	final['answer'] = finalAnswer
 
